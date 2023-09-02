@@ -72,22 +72,24 @@ public class App {
     static void printSeqSums(Seq<Integer> seq) {
         int sum = 0;
         for (int i: seq) sum += i;
-        long sum2 = seq.foldLeft(0L, (Long s, Integer i) -> s + i);
-        System.out.println(sum + " " + sum2);
+        System.out.println(sum);
     }
 
     static void testGetSet(Seq<Integer> seq, Random rand) {
-        int iters = rand.nextInt(10)+10;
+        int iters = Math.min(rand.nextInt(10)+10, seq.size() / 3);
         ArraySeq<IndexValuePair> pairs = new ArraySeq<>();
+        Set<Integer> used = new HashSet<>();
         for (int i = 0; i < iters; ++i) {
             int index = rand.nextInt(seq.size());
+            while (used.contains(index)) index = rand.nextInt(seq.size());
+            used.add(index);
             int value = rand.nextInt();
             pairs.add(new IndexValuePair(index, value));
             seq.set(index, value);
         }
         for (IndexValuePair ivp: pairs) {
             if (ivp.value != seq.get(ivp.index)) {
-                System.out.println("set-get pair failed");
+                System.out.println("set-get pair failed " + ivp.value + " " + ivp.index + " " + seq.get(ivp.index));
                 return;
             }
         }
@@ -100,7 +102,7 @@ public class App {
             int index = rand.nextInt(seq.size() - 1) + 1;
             int before = seq.get(index-1);
             int at = seq.get(index);
-            int after = seq.get(index);
+            int after = seq.get(index+1);
             int removed = seq.remove(index);
             if (removed != at) {
                 System.out.println("Removed value doesn't match the get.");
@@ -115,7 +117,7 @@ public class App {
                 return;
             }
             if (seq.get(index) != after) {
-                System.out.println("Value after not moved down on remove.");
+                System.out.println("Value after not moved down on remove. " + seq.get(index) +" " + after);
                 return;
             }
         }
@@ -159,8 +161,8 @@ public class App {
         }
         var seq3 = seq.map(i -> "str:" + i);
         for (int i = 0; i < seq.size(); ++i) {
-            if (seq3.get(i) != "str:" + seq.get(i)) {
-                System.out.println("String maps didn't match.");
+            if (!seq3.get(i).equals("str:" + seq.get(i))) {
+                System.out.println("String maps didn't match. " + seq3.get(i) + "!= str:" + seq.get(i));
                 return seq2;
             }
         }
@@ -230,10 +232,12 @@ public class App {
     }
 
     static void testFold(Seq<Integer> seq, Random rand) {
+        var sumL = 0L;
+        for (int i: seq) sumL += i;
         var leftSum = seq.foldLeft(0L, (Long s, Integer i) -> s + i);
         var rightSum = seq.foldRight((Integer i, Long s) -> i + s, 0L);
-        if (leftSum != rightSum) {
-            System.out.println("Fold sums don't match.");
+        if (sumL != leftSum || !leftSum.equals(rightSum)) {
+            System.out.println("Fold sums don't match. " + sumL + " " + leftSum + " " + rightSum);
         }
         var leftDiff = seq.foldLeft(0L, (Long d, Integer i) -> d - i);
         long diffL = 0L;

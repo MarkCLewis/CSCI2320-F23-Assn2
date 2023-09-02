@@ -6,7 +6,33 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ArraySeq<E> implements Seq<E> {
+  // Put your private data here
 
+  // I'm giving you two static factories and an equals method to make testing easier.
+  @SuppressWarnings("unchecked")
+  public static <E> ArraySeq<E> of(E... elems) {
+    ArraySeq<E> ret = new ArraySeq<>();
+    for (E e: elems) ret.add(e);
+    return ret;
+  }
+
+  public static ArraySeq<Integer> of(int... elems) {
+    ArraySeq<Integer> ret = new ArraySeq<>();
+    for (Integer e: elems) ret.add(e);
+    return ret;
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (!(that instanceof ArraySeq)) return false;
+    ArraySeq<?> thatSeq = (ArraySeq<?>)that;
+    if (thatSeq.size() != size()) return false;
+    for (int i = 0; i < size(); ++i)
+      if (thatSeq.get(i) != get(i)) return false;
+    return true;
+  }
+
+  // Implement the methods below and test them.
   @Override
   public Iterator<E> iterator() {
     // TODO Auto-generated method stub
