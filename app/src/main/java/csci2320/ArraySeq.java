@@ -16,7 +16,7 @@ public class ArraySeq<E> implements Seq<E> {
     return ret;
   }
 
-  public static ArraySeq<Integer> of(int... elems) {
+  public static ArraySeq<Integer> ofInt(int... elems) {
     ArraySeq<Integer> ret = new ArraySeq<>();
     for (Integer e: elems) ret.add(e);
     return ret;
@@ -30,6 +30,22 @@ public class ArraySeq<E> implements Seq<E> {
     for (int i = 0; i < size(); ++i)
       if (!thatSeq.get(i).equals(get(i))) return false;
     return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("DLinkedSeq(");
+    boolean first = true;
+    for (E e: this) {
+      if (!first) {
+        sb.append(", " + e);
+      } else {
+        sb.append(e.toString());
+        first = false;
+      }
+    }
+    sb.append(")");
+    return sb.toString();
   }
 
   // Implement the methods below and test them.
