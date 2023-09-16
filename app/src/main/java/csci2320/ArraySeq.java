@@ -24,11 +24,11 @@ public class ArraySeq<E> implements Seq<E> {
 
   @Override
   public boolean equals(Object that) {
-    if (!(that instanceof ArraySeq)) return false;
+    if (that == null || !(that instanceof ArraySeq)) return false;
     ArraySeq<?> thatSeq = (ArraySeq<?>)that;
     if (thatSeq.size() != size()) return false;
     for (int i = 0; i < size(); ++i)
-      if (thatSeq.get(i) != get(i)) return false;
+      if (!thatSeq.get(i).equals(get(i))) return false;
     return true;
   }
 
